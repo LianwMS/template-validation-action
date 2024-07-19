@@ -17,8 +17,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           repositoryURL: https://github.com/Azure-Samples/azd-ai-starter
       
-      - name: Get the output and print file
-        run: |
-          echo "The result file is ${{ steps.validation.outputs.resultFile }}"
-          ls
-          cat ${{ steps.validation.outputs.resultFile }}
+      - name: print result
+        run: cat ${{ steps.validation.outputs.resultFile }}
