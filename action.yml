@@ -53,7 +53,7 @@ runs:
         pip install -r requirements.txt
         cd ../candidate-repo
         python3 ../template-validation-action/src/gallery_validate.py . --debug --topics ${{ env.TOPICS }} --msdoresult ${{ steps.msdo.outputs.sarifFile }} --output ../output.log
-        echo "resultFile='../output.log'" >> $GITHUB_ENV
+        echo "resultFile=\"output.log\"" >> $GITHUB_ENV
       shell: bash
       env:
         TOPICS: ${{ env.topics }}
