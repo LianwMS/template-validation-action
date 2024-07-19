@@ -20,4 +20,5 @@ jobs:
       - name: Get the output and print file
         run: |
           echo "The result file is ${{ steps.validation.outputs.resultFile }}"
+          ls
           cat ${{ steps.validation.outputs.resultFile }}
