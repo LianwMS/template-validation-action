@@ -12,14 +12,14 @@ runs:
   using: "composite"
   steps:
     - name: Extract topics
-        id: extract_repo_info
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          extracted_link=${{ inputs.repositoryURL }} 
-          repo_info=$(echo $extracted_link | sed 's|https://github.com/||')
-          topics_list=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$repo_info/topics | jq -r '.names | join(",")')
-          echo "topics=\"$topics_list\"" >> $GITHUB_ENV
+      id: extract_repo_info
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        extracted_link=${{ inputs.repositoryURL }} 
+        repo_info=$(echo $extracted_link | sed 's|https://github.com/||')
+        topics_list=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$repo_info/topics | jq -r '.names | join(",")')
+        echo "topics=\"$topics_list\"" >> $GITHUB_ENV
 
     - name: Git Clone Repository
       run: |
