@@ -18,7 +18,7 @@ runs:
     - name: Extract topics
       id: extract_repo_info
       env:
-        GITHUB_TOKEN: ${{ inpits.token }}
+        GITHUB_TOKEN: ${{ inputs.token }}
       run: |
         extracted_link=${{ inputs.repositoryURL }} 
         repo_info=$(echo $extracted_link | sed 's|https://github.com/||')
