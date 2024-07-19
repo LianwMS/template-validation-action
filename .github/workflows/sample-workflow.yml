@@ -15,4 +15,4 @@ jobs:
         uses: LianwMS/template-validation-action@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repositoryURL: https://github.com/Azure-Samples/azd-ai-starter.git
+          repositoryURL: https://github.com/Azure-Samples/azd-ai-starter
