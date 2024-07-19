@@ -4,7 +4,6 @@ inputs:
   token: # id of input
     description: 'The GitHub token to use for API calls'
     required: true
-    default: '${{ secrets.GITHUB_TOKEN }}'
   repositoryURL:  # id of input
     description: 'The URL of the repository to validate'
     required: true
