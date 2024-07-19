@@ -1,0 +1,52 @@
+name: 'Gallery Standard Validation'
+description: 'Validate the standard of the gallery'
+inputs:
+  repositoryURL:  # id of input
+    description: 'The URL of the repository to validate'
+    required: true
+    default: ''
+outputs:
+  resultFile:
+    description: "A file path to a results file."
+runs:
+  using: "composite"
+  steps:
+    - name: Extract topics
+        id: extract_repo_info
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          extracted_link=${{ inputs.repositoryURL }} 
+          repo_info=$(echo $extracted_link | sed 's|https://github.com/||')
+          topics_list=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$repo_info/topics | jq -r '.names | join(",")')
+          echo "topics=\"$topics_list\"" >> $GITHUB_ENV
+
+    - name: Git Clone Repository
+      run: |
+        cd ..
+        git clone ${{ inputs.repositoryURL }} candidate-repo
+        if [ -d "./candidate-repo/hooks" ] && [ "$(ls -A ./candidate-repo/hooks/*.sh 2>/dev/null)" ]; then
+          chmod +x ./candidate-repo/hooks/*.sh
+        else
+          echo "No hooks directory or no .sh files found in hooks directory"
+        fi
+      shell: bash
+
+    - name: Run Microsoft Security DevOps Analysis
+      uses: microsoft/security-devops-action@v1
+      id: msdo
+      with:
+        tools: templateanalyzer
+      env:
+        GDN_TEMPLATEANALYZER_ANALYZEDIRECTORY: ./../candidate-repo/
+
+    - name: Run validation
+      run: |
+        sudo apt-get install python3
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        cd ../candidate-repo
+        python3 ../gallery-validation-action/src/gallery_validate.py . --debug --topics ${{ env.topics }} --topics ${{ env.TOPICS }} --msdoresult ${{ steps.msdo.outputs.sarifFile }}
+      shell: bash
+      env:
+        TOPICS: ${{ env.topics }}
