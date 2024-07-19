@@ -6,13 +6,16 @@ on:
       - main
 
 jobs:
-  test_gallery_validation_job:
+  test_template_validation_job:
     runs-on: ubuntu-latest
-    name: test gallery validation
+    name: test template validation
     steps:
       - uses: actions/checkout@v4
-      - id: foo
+      - id: validation
         uses: LianwMS/template-validation-action@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           repositoryURL: https://github.com/Azure-Samples/azd-ai-starter
+      
+      - name: Get the output
+        run: echo "The result file is ${{ steps.outputs.resultFile }}"

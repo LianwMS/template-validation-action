@@ -11,19 +11,20 @@ inputs:
 outputs:
   resultFile:
     description: "A file path to a results file."
+    value: ${{ steps.run_validation.outputs.resultFile}}
 runs:
   using: "composite"
   steps:
     - name: Extract topics
       id: extract_repo_info
-      env:
-        GITHUB_TOKEN: ${{ inputs.token }}
       run: |
         extracted_link=${{ inputs.repositoryURL }} 
         repo_info=$(echo $extracted_link | sed 's|https://github.com/||')
         topics_list=$(gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$repo_info/topics | jq -r '.names | join(",")')
         echo "topics=\"$topics_list\"" >> $GITHUB_ENV
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
 
     - name: Git Clone Repository
       run: |
@@ -45,12 +46,14 @@ runs:
         GDN_TEMPLATEANALYZER_ANALYZEDIRECTORY: ./../candidate-repo/
 
     - name: Run validation
+      id: run_validation
       run: |
         sudo apt-get install python3
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         cd ../candidate-repo
-        python3 ../template-validation-action/src/gallery_validate.py . --debug --topics ${{ env.TOPICS }} --msdoresult ${{ steps.msdo.outputs.sarifFile }}
+        python3 ../template-validation-action/src/gallery_validate.py . --debug --topics ${{ env.TOPICS }} --msdoresult ${{ steps.msdo.outputs.sarifFile }} --output ../output.log
+        echo "resultFile='../output.log'" >> $GITHUB_ENV
       shell: bash
       env:
         TOPICS: ${{ env.topics }}
