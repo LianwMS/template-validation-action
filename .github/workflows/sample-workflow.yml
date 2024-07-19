@@ -14,5 +14,4 @@ jobs:
       - id: foo
         uses: LianwMS/template-validation-action@main
         with:
-          repositoryURL: 'https://github.com/Azure-Samples/azd-ai-starter.git'
-
+          repositoryURL: https://github.com/Azure-Samples/azd-ai-starter.git
