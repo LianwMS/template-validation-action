@@ -1,0 +1,46 @@
+name: PR Check Runner
+
+on: 
+  pull_request:
+    branches:
+      - main  # Change this to your default branch if different
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Specify the Python version you need
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Run pytest
+        run: |
+          source venv/bin/activate
+          pytest test/
+
+      - name: Get PR branch repository name and branch name
+        id: get_pr_info
+        run: |
+          PR_REPO_NAME="${{ github.event.pull_request.head.repo.full_name }}"
+          PR_BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "PR_REPO_NAME=${PR_REPO_NAME}" >> $GITHUB_ENV
+          echo "PR_BRANCH_NAME=${PR_BRANCH_NAME}" >> $GITHUB_ENV
+
+      - name: Output PR branch repository name and branch name
+        run: |
+          echo "The PR branch repository name is ${{ env.PR_REPO_NAME }}"
+          echo "The PR branch name is ${{ env.PR_BRANCH_NAME }}"
+
+
