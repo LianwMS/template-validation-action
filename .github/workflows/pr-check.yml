@@ -35,12 +35,23 @@ jobs:
         run: |
           PR_REPO_NAME="${{ github.event.pull_request.head.repo.full_name }}"
           PR_BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          PR_REPO_BRACH="${{ github.event.pull_request.head.repo.full_name }}/${{ github.event.pull_request.head.ref }}"
           echo "PR_REPO_NAME=${PR_REPO_NAME}" >> $GITHUB_ENV
           echo "PR_BRANCH_NAME=${PR_BRANCH_NAME}" >> $GITHUB_ENV
+          echo "PR_REPO_BRACH=${PR_REPO_BRACH}" >> $GITHUB_ENV
 
       - name: Output PR branch repository name and branch name
         run: |
           echo "The PR branch repository name is ${{ env.PR_REPO_NAME }}"
           echo "The PR branch name is ${{ env.PR_BRANCH_NAME }}"
+          echo "The PR branch repository and branch is ${{ env.PR_REPO_BRACH }}"
+ 
+      - uses: actions/checkout@v4
+      - id: validation
+        uses: ${{ env.PR_REPO_BRACH }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repositoryURL: https://github.com/Azure-Samples/azd-ai-starter
 
-
+      - name: print result
+        run: cat ${{ steps.validation.outputs.resultFile }}
