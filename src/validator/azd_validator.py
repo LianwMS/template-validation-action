@@ -115,6 +115,7 @@ class AzdValidator(ValidatorBase):
                 text=True,
                 check=True,
                 shell=True,
+                timeout=3600,
             )
             logging.info(f"{result.stdout}")
             self.extract_resource_group(result.stdout)

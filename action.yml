@@ -336,7 +336,7 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       run: |
         pip install -r ${{ steps.reform_path.outputs.actionPath }}/requirements.txt
-        python3 ${{ steps.reform_path.outputs.actionPath }}/src/gallery_validate.py . --output ${{ github.run_id }}-output.log ${{ steps.prepare_arguments.outputs.arguments }}
+        python3 ${{ steps.reform_path.outputs.actionPath }}/src/gallery_validate.py . --output ${{ github.run_id }}-output.log ${{ steps.prepare_arguments.outputs.arguments }} --debug
       shell: bash
       env:
         CREATE_ROLE_FOR_USER: false
