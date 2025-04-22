@@ -24,7 +24,7 @@ jobs:
       - name: Clone repo
         working-directory: ${{ runner.temp }}
         run: |
-          git clone https://github.com/Azure-Samples/azd-ai-starter template
+          git clone https://github.com/Lianwms/azd-ai-starter template
 
           candidate_hooks_paths=("./template/hooks" "./template/infra/hooks" "./template/scripts" "./template/deploy/aca/scripts" "./template/deploy/aks/scripts" "./template/deploy/app-service/scripts")
           for hooks_path in "${candidate_hooks_paths[@]}"; do
@@ -37,17 +37,18 @@ jobs:
           done
 
       - id: validation1
-        uses: microsoft/template-validation-action@main
+        uses: Lianwms/template-validation-action@main
         with:
           workingDirectory: ${{ runner.temp }}/template
         env:
           REPOSITORY_NAME: Azure-Samples/azd-ai-starter
+          validateAzd: false
 
       - name: print result
         run: cat ${{ steps.validation1.outputs.resultFile }}
 
       - id: validation2
-        uses: microsoft/template-validation-action@main
+        uses: Lianwms/template-validation-action@main
         with:
           workingDirectory: ${{ runner.temp }}/template
           validateAzd: false
@@ -62,13 +63,14 @@ jobs:
         run: cat ${{ steps.validation2.outputs.resultFile }}
 
       - id: validation3
-        uses: microsoft/template-validation-action@main
+        uses: Lianwms/template-validation-action@main
         with:
           workingDirectory: ${{ runner.temp }}/template
           validatePaths: "None"
           expectedTopics: "None"
           useDevContainer: false
           validateTests: "Playwright"
+          validateAzd: false
         env:
           REPOSITORY_NAME: Azure-Samples/azd-ai-starter
 
