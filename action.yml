@@ -31,6 +31,10 @@ inputs:
     default: 'Playwright'
     options:
       - 'Playwright'
+  validateRemoteBuild:
+    description: 'Validate remoteBuild setting'
+    required: false
+    default: 'true'
 outputs:
   resultFile:
     description: "A file path to a results file."
@@ -329,6 +333,9 @@ runs:
         fi
         if [ ${{ inputs.validateTests }} == "Playwright" ]; then
           arguments+=" --validate_playwright_test"
+        fi
+        if [ ${{ inputs.validateRemoteBuild }} == "true" ]; then
+          arguments+=" --validate_remote_build"
         fi
         echo "arguments=$arguments" >> $GITHUB_OUTPUT
       shell: bash

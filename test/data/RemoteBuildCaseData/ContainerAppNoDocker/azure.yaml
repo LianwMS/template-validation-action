@@ -1,0 +1,14 @@
+name: llama-index-python
+metadata:
+    template: llama-index-python
+services:
+    llama-index-python:
+        project: ./backend
+        host: containerapp
+        language: python
+        hooks:
+          predeploy:
+            shell: sh
+            continueOnError: false
+            interactive: false
+            run: cd ../frontend; npm install

@@ -37,6 +37,11 @@ def main():
     parser.add_argument(
         "--validate_playwright_test", action="store_true", help="Run Playwright tests."
     )
+    parser.add_argument(
+        "--validate_remote_build",
+        action="store_true",
+        help="Whether to validate the remote build functionality.",
+    )
     parser.add_argument("--output", type=str, help="The output file path.")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging.")
 
@@ -46,7 +51,7 @@ def main():
     logging.basicConfig(format="%(message)s", level=log_level)
 
     logging.debug(
-        f"Repo path: {args.repo_path} validate_paths: {args.validate_paths} validate_azd: {args.validate_azd} debug: {args.debug} topics: {args.topics} expected_topics: {args.expected_topics} validate_playwright_test: {args.validate_playwright_test} psrule: {args.psrule_result} output: {args.output}"
+        f"Repo path: {args.repo_path} validate_paths: {args.validate_paths} validate_azd: {args.validate_azd} debug: {args.debug} topics: {args.topics} expected_topics: {args.expected_topics} validate_playwright_test: {args.validate_playwright_test} validate_remote_build: {args.validate_remote_build} psrule: {args.psrule_result} output: {args.output}"
     )
 
     # Parse rules and generate validators

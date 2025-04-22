@@ -3,6 +3,7 @@ import logging
 import os
 from validator.file_validator import FileValidator
 from validator.azd_validator import AzdValidator
+from validator.remote_build_validator import RemoteBuildValidator
 from validator.topic_validator import TopicValidator
 from validator.folder_validator import FolderValidator
 from validator.ps_rule_validator import PSRuleValidator
@@ -171,6 +172,13 @@ class RuleParser:
                             break
                     if not inserted:
                         validators.append(playwright_validator)
+
+            elif validator_type == "RemoteBuildValidator":
+                if not self.args.validate_remote_build:
+                    continue
+
+                remote_build_validator = RemoteBuildValidator(catalog, self.args.repo_path, severity)
+                validators.append(remote_build_validator)
             else:
                 continue
 

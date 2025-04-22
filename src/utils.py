@@ -49,3 +49,11 @@ def retry(times, retryMessages):
         return fn
 
     return decorator
+
+def formatPathwithOS(path):
+    """
+    Format the path with the current OS path separator.
+    :param path: path to format
+    :return: formatted path
+    """
+    return os.path.normpath(path)

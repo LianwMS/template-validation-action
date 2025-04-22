@@ -5,6 +5,7 @@ from unittest.mock import patch, mock_open
 from rule_parser import RuleParser
 from validator.file_validator import FileValidator
 from validator.azd_validator import AzdValidator
+from validator.remote_build_validator import RemoteBuildValidator
 from validator.topic_validator import TopicValidator
 from validator.azd_command import AzdCommand
 from validator.ps_rule_validator import PSRuleValidator
@@ -347,6 +348,38 @@ class TestParseRules(unittest.TestCase):
         self.assertEqual(file_validator.h2Tags, None)
         self.assertEqual(file_validator.severity, Severity.MODERATE)
 
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data=json.dumps(
+            {
+                "remote build": {
+                     "catalog": "Functional Requirements",
+                      "validator": "RemoteBuildValidator",
+                      "severity": "moderate"  
+                }
+            }
+        ),
+    )
+    def test_remote_validator_enabled(self, mock_file):
+        args = argparse.Namespace(
+            validate_azd=False,
+            validate_playwright_test=False,
+            validate_remote_build=True,
+            topics=None,
+            repo_path=".",
+            validate_paths=None,
+            expected_topics=None,
+        )
+        parser = RuleParser("dummy_path", args)
+        validators = parser.parse()
+
+        self.assertEqual(len(validators), 1)
+
+        remote_validator = validators[0]
+        self.assertIsInstance(remote_validator, RemoteBuildValidator)
+        self.assertEqual(remote_validator.catalog, "Functional Requirements")
+        self.assertEqual(remote_validator.severity, Severity.MODERATE)
 
 if __name__ == "__main__":
     unittest.main()

@@ -24,6 +24,7 @@ class TestGalleryValidate(unittest.TestCase):
             psrule_result="dummy_psrule_result_file",
             output=None,
             debug=True,
+            validate_remote_build=True,
         )
 
         mock_rule_parser = MockRuleParser.return_value
