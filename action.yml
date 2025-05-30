@@ -164,6 +164,33 @@ runs:
     #  shell: bash
     #  env:
     #    AZURE_ENV_NAME: ${{ env.AZURE_ENV_NAME }}
+    - name: Check parameters in main.bicep
+      id: check_parameters
+      #if: ${{ inputs.validateAzd == 'true' }}
+      run: |
+        if [ -f "${{ steps.reform_path.outputs.workingDirectory }}/infra/main.bicep" ]; then
+          # Get parameter names that don't have a default value (no equals sign in the line)
+          parameters=$(grep -P "^param\s+\w+\s+\w+$" "${{ steps.reform_path.outputs.workingDirectory }}/infra/main.bicep" | grep -oP "^param\s+\K\w+" || echo "")
+          echo "parameters from main.bicep: $parameters"
+          # remove if parameters are set default values in /infra/main.parameters.json. 
+          # The following the sample (no default value) in main.parameters.json: "location": { "value": "${AZURE_LOCATION}" }
+          # The following the sample (with default value) in main.parameters.json: "location": { "value": "${AZURE_LOCATION}=eastus2" }
+          if [ -f "${{ steps.reform_path.outputs.workingDirectory }}/infra/main.parameters.json" ]; then
+            required_env=""
+            for param in $parameters; do
+              echo "Checking parameter: $param"
+              # Check if parameter exists and has no default value
+              param_value=$(grep -A 1 "\"$param\"" "${{ steps.reform_path.outputs.workingDirectory }}/infra/main.parameters.json" | grep "value" | grep -v "=" || echo "")
+              if [ ! -z "$param_value" ]; then
+                # parse param_value to get the value. e.g get AZURE_LOCATION from "value": "${AZURE_LOCATION}"
+                env_value=$(echo "$param_value" | grep -oP '\$\{([^}]+)\}' | sed 's/\${//;s/}//g' || echo "")
+                required_env+="$env_value "
+              fi
+            done
+            echo "required_env from json: $required_env"
+          fi
+        fi
+      shell: bash
 
     - name: Check and Set targetScope in main.bicep
       id: check_targetScope
